@@ -1,0 +1,26 @@
+version: '2'
+services:
+  django_with_metrics:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/code
+
+  grafana_graphite:
+    image: kamon/grafana_graphite
+    ports:
+      - '80:80'
+      - '81:81'
+      - '8125:8125/udp'
+      - '8126:8126'
+      - '2003:2003/udp'
+      - '2003:2003/tcp'
+    volumes:
+      - ./data/whisper:/opt/graphite/storage/whisper
+      - ./data/grafana:/opt/grafana/data
+      - ./log/graphite:/opt/graphite/storage/log
+      - ./log/supervisor:/var/log/supervisor
+      - ./compose/carbon.conf:/opt/graphite/conf/carbon.conf
